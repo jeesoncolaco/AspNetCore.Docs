@@ -5,11 +5,12 @@ description: Learn how to create reusable layout components for Blazor apps.
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 03/02/2021
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+ms.date: 03/13/2023
 uid: blazor/components/layouts
 ---
 # ASP.NET Core Blazor layouts
+
+This article explains how to create reusable layout components for Blazor apps.
 
 Some app elements, such as menus, copyright messages, and company logos, are usually part of app's overall presentation. Placing a copy of the markup for these elements into all of the components of an app isn't efficient. Every time that one of these elements is updated, every component that uses the element must be updated. This approach is costly to maintain and can lead to inconsistent content if an update is missed. *Layouts* solve these problems.
 
@@ -25,43 +26,77 @@ To create a layout component:
 * Inherit the component from <xref:Microsoft.AspNetCore.Components.LayoutComponentBase>. The <xref:Microsoft.AspNetCore.Components.LayoutComponentBase> defines a <xref:Microsoft.AspNetCore.Components.LayoutComponentBase.Body> property (<xref:Microsoft.AspNetCore.Components.RenderFragment> type) for the rendered content inside the layout.
 * Use the Razor syntax `@Body` to specify the location in the layout markup where the content is rendered.
 
+> [!NOTE]
+> For more information on <xref:Microsoft.AspNetCore.Components.RenderFragment>, see <xref:blazor/components/index#child-content-render-fragments>.
+
 The following `DoctorWhoLayout` component shows the Razor template of a layout component. The layout inherits <xref:Microsoft.AspNetCore.Components.LayoutComponentBase> and sets the `@Body` between the navigation bar (`<nav>...</nav>`) and the footer (`<footer>...</footer>`).
 
 `Shared/DoctorWhoLayout.razor`:
 
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/5.x/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout.razor?highlight=1,13)]
+:::code language="razor" source="~/../blazor-samples/7.0/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout.razor" highlight="1,13":::
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-5.0"
+:::moniker range=">= aspnetcore-6.0 < aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/3.x/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout.razor?highlight=1,13)]
+:::code language="razor" source="~/../blazor-samples/6.0/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout.razor" highlight="1,13":::
 
-::: moniker-end
+:::moniker-end
+
+:::moniker range=">= aspnetcore-5.0 < aspnetcore-6.0"
+
+:::code language="razor" source="~/../blazor-samples/5.0/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout.razor" highlight="1,13":::
+
+:::moniker-end
+
+:::moniker range="< aspnetcore-5.0"
+
+:::code language="razor" source="~/../blazor-samples/3.1/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout.razor" highlight="1,13":::
+
+:::moniker-end
 
 ### `MainLayout` component
 
-In an app created from a [Blazor project template](xref:blazor/project-structure), the `MainLayout` component is the app's [default layout](#apply-a-default-layout-to-an-app).
+In an app created from a [Blazor project template](xref:blazor/project-structure), the `MainLayout` component is the app's [default layout](#apply-a-default-layout-to-an-app). Blazor's layout adopts the [:::no-loc text="Flexbox"::: layout model (MDN documentation)](https://developer.mozilla.org/docs/Glossary/Flexbox) ([W3C specification](https://www.w3.org/TR/css-flexbox-1/)).
 
 `Shared/MainLayout.razor`:
 
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/5.x/BlazorSample_WebAssembly/Shared/layouts/MainLayout.razor)]
+:::code language="razor" source="~/../blazor-samples/7.0/BlazorSample_WebAssembly/Shared/layouts/MainLayout.razor":::
 
-[Blazor's CSS isolation feature](xref:blazor/components/css-isolation) applies isolated CSS styles to the `MainLayout` component. By convention, the styles are provided by the accompanying stylesheet of the same name, `Shared/MainLayout.razor.css`. The ASP.NET Core framework implementation of the stylesheet is available for inspection in the [ASP.NET Core reference source (dotnet/aspnetcore GitHub repository)](https://github.com/dotnet/aspnetcore/blob/main/src/ProjectTemplates/Web.ProjectTemplates/content/ComponentsWebAssembly-CSharp/Client/Shared/MainLayout.razor.css).
+:::moniker-end
 
-[!INCLUDE[](~/blazor/includes/aspnetcore-repo-ref-source-links.md)]
+:::moniker range=">= aspnetcore-6.0 < aspnetcore-7.0"
 
-::: moniker-end
+:::code language="razor" source="~/../blazor-samples/6.0/BlazorSample_WebAssembly/Shared/layouts/MainLayout.razor":::
 
-::: moniker range="< aspnetcore-5.0"
+:::moniker-end
 
-[!code-razor[](~/blazor/common/samples/3.x/BlazorSample_WebAssembly/Shared/layouts/MainLayout.razor)]
+:::moniker range=">= aspnetcore-5.0 < aspnetcore-6.0"
 
-::: moniker-end
+:::code language="razor" source="~/../blazor-samples/5.0/BlazorSample_WebAssembly/Shared/layouts/MainLayout.razor":::
+
+:::moniker-end
+
+:::moniker range="< aspnetcore-5.0"
+
+:::code language="razor" source="~/../blazor-samples/3.1/BlazorSample_WebAssembly/Shared/layouts/MainLayout.razor":::
+
+:::moniker-end
+
+:::moniker range=">= aspnetcore-5.0"
+
+[Blazor's CSS isolation feature](xref:blazor/components/css-isolation) applies isolated CSS styles to the `MainLayout` component. By convention, the styles are provided by the accompanying stylesheet of the same name, `Shared/MainLayout.razor.css`. The ASP.NET Core framework implementation of the stylesheet is available for inspection in the ASP.NET Core reference source (`dotnet/aspnetcore` GitHub repository):
+
+* [Blazor Server `MainLayout.razor.css`](https://github.com/dotnet/aspnetcore/blob/main/src/ProjectTemplates/Web.ProjectTemplates/content/BlazorServerWeb-CSharp/Shared/MainLayout.razor.css)
+* [Blazor WebAssembly `MainLayout.razor.css`](https://github.com/dotnet/aspnetcore/blob/main/src/ProjectTemplates/Web.ProjectTemplates/content/ComponentsWebAssembly-CSharp/Client/Shared/MainLayout.razor.css)
+
+[!INCLUDE[](~/includes/aspnetcore-repo-ref-source-links.md)]
+
+:::moniker-end
 
 ## Apply a layout
 
@@ -73,17 +108,29 @@ The content of the following `Episodes` component is inserted into the `DoctorWh
 
 `Pages/Episodes.razor`:
 
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/5.x/BlazorSample_WebAssembly/Pages/layouts/Episodes.razor?highlight=2)]
+:::code language="razor" source="~/../blazor-samples/7.0/BlazorSample_WebAssembly/Pages/layouts/Episodes.razor" highlight="2":::
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-5.0"
+:::moniker range=">= aspnetcore-6.0 < aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/3.x/BlazorSample_WebAssembly/Pages/layouts/Episodes.razor?highlight=2)]
+:::code language="razor" source="~/../blazor-samples/6.0/BlazorSample_WebAssembly/Pages/layouts/Episodes.razor" highlight="2":::
 
-::: moniker-end
+:::moniker-end
+
+:::moniker range=">= aspnetcore-5.0 < aspnetcore-6.0"
+
+:::code language="razor" source="~/../blazor-samples/5.0/BlazorSample_WebAssembly/Pages/layouts/Episodes.razor" highlight="2":::
+
+:::moniker-end
+
+:::moniker range="< aspnetcore-5.0"
+
+:::code language="razor" source="~/../blazor-samples/3.1/BlazorSample_WebAssembly/Pages/layouts/Episodes.razor" highlight="2":::
+
+:::moniker-end
 
 The following rendered HTML markup is produced by the preceding `DoctorWhoLayout` and `Episodes` component. Extraneous markup doesn't appear in order to focus on the content provided by the two components involved:
 
@@ -98,7 +145,7 @@ The following rendered HTML markup is produced by the preceding `DoctorWhoLayout
         </header>
 
         <nav>
-            <a href="masterlist">Master Episode List</a>
+            <a href="main-list">Main Episode List</a>
             <a href="search">Search</a>
             <a href="new">Add Episode</a>
         </nav>
@@ -147,23 +194,35 @@ Specifying a layout in `_Imports.razor` overrides a layout specified as the rout
 
 ### Apply a default layout to an app
 
-Specify the default app layout in the in the `App` component's <xref:Microsoft.AspNetCore.Components.Routing.Router> component. The following example from an app based on a [Blazor project template](xref:blazor/project-structure) sets the default layout to the `MainLayout` component.
+Specify the default app layout in the `App` component's <xref:Microsoft.AspNetCore.Components.Routing.Router> component. The following example from an app based on a [Blazor project template](xref:blazor/project-structure) sets the default layout to the `MainLayout` component.
 
 `App.razor`:
 
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/5.x/BlazorSample_WebAssembly/layouts/App1.razor?highlight=3)]
+:::code language="razor" source="~/../blazor-samples/7.0/BlazorSample_WebAssembly/layouts/App1.razor" highlight="3":::
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-5.0"
+:::moniker range=">= aspnetcore-6.0 < aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/3.x/BlazorSample_WebAssembly/layouts/App1.razor?highlight=3)]
+:::code language="razor" source="~/../blazor-samples/6.0/BlazorSample_WebAssembly/layouts/App1.razor" highlight="3":::
 
-::: moniker-end
+:::moniker-end
+
+:::moniker range=">= aspnetcore-5.0 < aspnetcore-6.0"
+
+:::code language="razor" source="~/../blazor-samples/5.0/BlazorSample_WebAssembly/layouts/App1.razor" highlight="3":::
 
 [!INCLUDE[](~/blazor/includes/prefer-exact-matches.md)]
+
+:::moniker-end
+
+:::moniker range="< aspnetcore-5.0"
+
+:::code language="razor" source="~/../blazor-samples/3.1/BlazorSample_WebAssembly/layouts/App1.razor" highlight="3":::
+
+:::moniker-end
 
 For more information on the <xref:Microsoft.AspNetCore.Components.Routing.Router> component, see <xref:blazor/fundamentals/routing>.
 
@@ -175,12 +234,10 @@ To set a layout for arbitrary Razor template content, specify the layout with a 
 
 `App.razor`:
 
-::: moniker range=">= aspnetcore-5.0"
-
 ```razor
-<Router AppAssembly="@typeof(Program).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+<Router ...>
+    <Found ...>
+        ...
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(ErrorLayout)">
@@ -191,27 +248,11 @@ To set a layout for arbitrary Razor template content, specify the layout with a 
 </Router>
 ```
 
-::: moniker-end
-
-::: moniker range="< aspnetcore-5.0"
-
-```razor
-<Router AppAssembly="@typeof(Program).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-    </Found>
-    <NotFound>
-        <LayoutView Layout="@typeof(ErrorLayout)">
-            <h1>Page not found</h1>
-            <p>Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
-```
-
-::: moniker-end
+:::moniker range="= aspnetcore-5.0"
 
 [!INCLUDE[](~/blazor/includes/prefer-exact-matches.md)]
+
+:::moniker-end
 
 ## Nested layouts
 
@@ -223,33 +264,57 @@ The following `DoctorWhoLayout` component is a modified version of the example s
 
 `Shared/DoctorWhoLayout.razor`:
 
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/5.x/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout2.razor?highlight=2,12)]
+:::code language="razor" source="~/../blazor-samples/7.0/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout2.razor" highlight="2,12":::
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-5.0"
+:::moniker range=">= aspnetcore-6.0 < aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/3.x/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout2.razor?highlight=2,12)]
+:::code language="razor" source="~/../blazor-samples/6.0/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout2.razor" highlight="2,12":::
 
-::: moniker-end
+:::moniker-end
+
+:::moniker range=">= aspnetcore-5.0 < aspnetcore-6.0"
+
+:::code language="razor" source="~/../blazor-samples/5.0/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout2.razor" highlight="2,12":::
+
+:::moniker-end
+
+:::moniker range="< aspnetcore-5.0"
+
+:::code language="razor" source="~/../blazor-samples/3.1/BlazorSample_WebAssembly/Shared/layouts/DoctorWhoLayout2.razor" highlight="2,12":::
+
+:::moniker-end
 
 The `ProductionsLayout` component contains the top-level layout elements, where the header (`<header>...</header>`) and footer (`<footer>...</footer>`) elements now reside. The `DoctorWhoLayout` with the `Episodes` component is rendered where `@Body` appears.
 
 `Shared/ProductionsLayout.razor`:
 
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/5.x/BlazorSample_WebAssembly/Shared/layouts/ProductionsLayout.razor?highlight=13)]
+:::code language="razor" source="~/../blazor-samples/7.0/BlazorSample_WebAssembly/Shared/layouts/ProductionsLayout.razor" highlight="13":::
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-5.0"
+:::moniker range=">= aspnetcore-6.0 < aspnetcore-7.0"
 
-[!code-razor[](~/blazor/common/samples/3.x/BlazorSample_WebAssembly/Shared/layouts/ProductionsLayout.razor?highlight=13)]
+:::code language="razor" source="~/../blazor-samples/6.0/BlazorSample_WebAssembly/Shared/layouts/ProductionsLayout.razor" highlight="13":::
 
-::: moniker-end
+:::moniker-end
+
+:::moniker range=">= aspnetcore-5.0 < aspnetcore-6.0"
+
+:::code language="razor" source="~/../blazor-samples/5.0/BlazorSample_WebAssembly/Shared/layouts/ProductionsLayout.razor" highlight="13":::
+
+:::moniker-end
+
+:::moniker range="< aspnetcore-5.0"
+
+:::code language="razor" source="~/../blazor-samples/3.1/BlazorSample_WebAssembly/Shared/layouts/ProductionsLayout.razor" highlight="13":::
+
+:::moniker-end
 
 The following rendered HTML markup is produced by the preceding nested layout. Extraneous markup doesn't appear in order to focus on the nested content provided by the three components involved:
 
@@ -265,7 +330,7 @@ The following rendered HTML markup is produced by the preceding nested layout. E
         </header>
 
         <nav>
-            <a href="master-production-list">Master Production List</a>
+            <a href="main-production-list">Main Production List</a>
             <a href="production-search">Search</a>
             <a href="new-production">Add Production</a>
         </nav>
@@ -273,7 +338,7 @@ The following rendered HTML markup is produced by the preceding nested layout. E
         <h1>Doctor Who&trade; Episode Database</h1>
 
         <nav>
-            <a href="episode-masterlist">Master Episode List</a>
+            <a href="episode-main-list">Main Episode List</a>
             <a href="episode-search">Search</a>
             <a href="new-episode">Add Episode</a>
         </nav>
@@ -305,3 +370,4 @@ When routable components are integrated into a Razor Pages app, the app's shared
 ## Additional resources
 
 * <xref:mvc/views/layout>
+* [Blazor samples GitHub repository (`dotnet/blazor-samples`)](https://github.com/dotnet/blazor-samples)

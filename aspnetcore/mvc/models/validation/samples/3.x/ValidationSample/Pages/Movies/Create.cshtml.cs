@@ -19,7 +19,7 @@ namespace ValidationSample.Pages.Movies
         [BindProperty]
         public Movie Movie { get; set; }
 
-        #region snippet_OnPostAsync
+        // <snippet_OnPostAsync>
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -32,15 +32,15 @@ namespace ValidationSample.Pages.Movies
 
             return RedirectToPage("./Index");
         }
-        #endregion
+        // </snippet_OnPostAsync>
 
-       #region snippet_TryValidate
+        // <snippet_TryValidate>
         public async Task<IActionResult> OnPostTryValidateAsync()
         {
             var modifiedReleaseDate = DateTime.Now.Date;
             Movie.ReleaseDate = modifiedReleaseDate;
 
-            ModelState.ClearValidationState(nameof(Movie)));
+            ModelState.ClearValidationState(nameof(Movie));
             if (!TryValidateModel(Movie, nameof(Movie)))
             {
                 return Page();
@@ -51,6 +51,6 @@ namespace ValidationSample.Pages.Movies
 
             return RedirectToPage("./Index");
         }
-        #endregion
+        // </snippet_TryValidate>
     }
 }

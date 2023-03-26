@@ -4,14 +4,15 @@ author: rick-anderson
 description: Learn about Razor markup syntax for embedding server-based code into webpages.
 ms.author: riande
 ms.date: 02/12/2020
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: mvc/views/razor
 ---
 # Razor syntax reference for ASP.NET Core
 
 By [Rick Anderson](https://twitter.com/RickAndMSFT), [Taylor Mullen](https://twitter.com/ntaylormullen), and [Dan Vicarel](https://github.com/Rabadash8820)
 
-Razor is a markup syntax for embedding server-based code into webpages. The Razor syntax consists of Razor markup, C#, and HTML. Files containing Razor generally have a `.cshtml` file extension. Razor is also found in [Razor components](xref:blazor/components/index) files (`.razor`).
+Razor is a markup syntax for embedding .NET based code into webpages. The Razor syntax consists of Razor markup, C#, and HTML. Files containing Razor generally have a `.cshtml` file extension. Razor is also found in [Razor component](xref:blazor/components/index) files (`.razor`). Razor syntax is similar to the templating engines of various JavaScript single-page application (SPA) frameworks, such as Angular, React, VueJs, and Svelte. For more information see, <xref:client-side/spa-services>.
+
+[Introduction to ASP.NET Web Programming Using the Razor Syntax](/aspnet/web-pages/overview/getting-started/introducing-razor-syntax-c) provides many samples of programming with Razor syntax. Although the topic was written for ASP.NET rather than ASP.NET Core, most of the samples apply to ASP.NET Core.
 
 ## Rendering HTML
 
@@ -21,7 +22,7 @@ The default Razor language is HTML. Rendering HTML from Razor markup is no diffe
 
 Razor supports C# and uses the `@` symbol to transition from HTML to C#. Razor evaluates C# expressions and renders them in the HTML output.
 
-When an `@` symbol is followed by a [Razor reserved keyword](#razor-reserved-keywords), it transitions into Razor-specific markup. Otherwise, it transitions into plain C#.
+When an `@` symbol is followed by a [Razor reserved keyword](#razor-reserved-keywords), it transitions into Razor-specific markup. Otherwise, it transitions into plain HTML.
 
 To escape an `@` symbol in Razor markup, use a second `@` symbol:
 
@@ -40,6 +41,29 @@ HTML attributes and content containing email addresses don't treat the `@` symbo
 ```cshtml
 <a href="mailto:Support@contoso.com">Support@contoso.com</a>
 ```
+
+
+:::moniker range=">= aspnetcore-6.0"
+
+### Scalable Vector Graphics (SVG)
+
+[SVG](https://developer.mozilla.org/docs/Web/SVG) [foreignObject](https://developer.mozilla.org/docs/Web/SVG/Element/foreignObject) elements are supported:
+
+```html
+@{
+    string message = "foreignObject example with Scalable Vector Graphics (SVG)";
+}
+
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" rx="10" ry="10" width="200" height="200" stroke="black" 
+        fill="none" />
+    <foreignObject x="20" y="20" width="160" height="160">
+        <p>@message</p>
+    </foreignObject>
+</svg>
+```
+
+:::moniker-end
 
 ## Implicit Razor expressions
 
@@ -165,8 +189,6 @@ The code renders the following HTML:
 <p>Hate cannot drive out hate, only love can do that. - Martin Luther King, Jr.</p>
 ```
 
-::: moniker range=">= aspnetcore-3.0"
-
 In code blocks, declare [local functions](/dotnet/csharp/programming-guide/classes-and-structs/local-functions) with markup to serve as templating methods:
 
 ```cshtml
@@ -187,8 +209,6 @@ The code renders the following HTML:
 <p>Name: <strong>Mahatma Gandhi</strong></p>
 <p>Name: <strong>Martin Luther King, Jr.</strong></p>
 ```
-
-::: moniker-end
 
 ### Implicit transitions
 
@@ -234,7 +254,40 @@ To render the rest of an entire line as HTML inside a code block, use `@:` synta
 
 Without the `@:` in the code, a Razor runtime error is generated.
 
-Extra `@` characters in a Razor file can cause compiler errors at statements later in the block. These compiler errors can be difficult to understand because the actual error occurs before the reported error. This error is common after combining multiple implicit/explicit expressions into a single code block.
+Extra `@` characters in a Razor file can cause compiler errors at statements later in the block. These extra `@` compiler errors:
+
+* Can be difficult to understand because the actual error occurs before the reported error.
+* Is common after combining multiple implicit and explicit expressions into a single code block.
+
+### Conditional attribute rendering
+
+Razor automatically omits attributes that aren't needed. If the value passed in is `null` or `false`, the attribute isn't rendered.
+
+For example,  consider the following razor:
+
+```cshtml
+<div class="@false">False</div>
+<div class="@null">Null</div>
+<div class="@("")">Empty</div>
+<div class="@("false")">False String</div>
+<div class="@("active")">String</div>
+<input type="checkbox" checked="@true" name="true" />
+<input type="checkbox" checked="@false" name="false" />
+<input type="checkbox" checked="@null" name="null" />
+```
+
+The preceding Razor markup generates the following HTML:
+
+```html
+<div>False</div>
+<div>Null</div>
+<div class="">Empty</div>
+<div class="False">False String</div>
+<div class="active">String</div>
+<input type="checkbox" checked="checked" name="true">
+<input type="checkbox" name="false">
+<input type="checkbox" name="null">
+```
 
 ## Control structures
 
@@ -446,7 +499,12 @@ The `@attribute` directive adds the given attribute to the class of the generate
 @attribute [Authorize]
 ```
 
-::: moniker range=">= aspnetcore-3.0"
+The `@attribute` directive can also be used to supply a constant-based route template in a Razor component. In the following example, the `@page` directive in a component is replaced with the `@attribute` directive and the constant-based route template in `Constants.CounterRoute`, which is set elsewhere in the app to "`/counter`":
+
+```diff
+- @page "/counter"
++ @attribute [Route(Constants.CounterRoute)]
+```
 
 ### `@code`
 
@@ -462,8 +520,6 @@ The `@code` block enables a [Razor component](xref:blazor/components/index) to a
 
 For Razor components, `@code` is an alias of [`@functions`](#functions) and recommended over `@functions`. More than one `@code` block is permissible.
 
-::: moniker-end
-
 ### `@functions`
 
 The `@functions` directive enables adding C# members (fields, properties, and methods) to the generated class:
@@ -474,11 +530,7 @@ The `@functions` directive enables adding C# members (fields, properties, and me
 }
 ```
 
-::: moniker range=">= aspnetcore-3.0"
-
 In [Razor components](xref:blazor/components/index), use `@code` over `@functions` to add C# members.
-
-::: moniker-end
 
 For example:
 
@@ -493,8 +545,6 @@ The code generates the following HTML markup:
 The following code is the generated Razor C# class:
 
 [!code-csharp[](razor/sample/Classes/Views_Home_Test_cshtml.cs?range=1-19)]
-
-::: moniker range=">= aspnetcore-3.0"
 
 `@functions` methods serve as templating methods when they have markup:
 
@@ -538,8 +588,6 @@ The following example implements <xref:System.IDisposable?displayProperty=fullNa
     public void Dispose() => _isDisposed = true;
 }
 ```
-
-::: moniker-end
 
 ### `@inherits`
 
@@ -588,15 +636,11 @@ If "rick@contoso.com" is passed in the model, the view generates the following H
 
 The `@inject` directive enables the Razor Page to inject a service from the [service container](xref:fundamentals/dependency-injection) into a view. For more information, see [Dependency injection into views](xref:mvc/views/dependency-injection).
 
-::: moniker range=">= aspnetcore-3.0"
-
 ### `@layout`
 
 *This scenario only applies to Razor components (`.razor`).*
 
 The `@layout` directive specifies a layout for routable Razor components that have an [`@page`](#page) directive. Layout components are used to avoid code duplication and inconsistency. For more information, see <xref:blazor/components/layouts>.
-
-::: moniker-end
 
 ### `@model`
 
@@ -614,7 +658,7 @@ In an ASP.NET Core MVC or Razor Pages app created with individual user accounts,
 @model LoginViewModel
 ```
 
-The class generated inherits from `RazorPage<dynamic>`:
+The class generated inherits from `RazorPage<LoginViewModel>`:
 
 ```csharp
 public class _Views_Account_Login_cshtml : RazorPage<LoginViewModel>
@@ -633,7 +677,7 @@ The `@model` directive specifies the type of the `Model` property. The directive
 The `@namespace` directive:
 
 * Sets the namespace of the class of the generated Razor page, MVC view, or Razor component.
-* Sets the root derived namespaces of a pages, views, or components classes from the closest imports file in the directory tree, `_ViewImports.cshtml` (views or pages) or *_Imports.razor* (Razor components).
+* Sets the root derived namespaces of a pages, views, or components classes from the closest imports file in the directory tree, `_ViewImports.cshtml` (views or pages) or `_Imports.razor` (Razor components).
 
 ```cshtml
 @namespace Your.Namespace.Here
@@ -665,22 +709,12 @@ If the `EvenMorePages` folder in the preceding example has an imports file with 
 
 ### `@page`
 
-::: moniker range=">= aspnetcore-3.0"
-
 The `@page` directive has different effects depending on the type of the file where it appears. The directive:
 
 * In a `.cshtml` file indicates that the file is a Razor Page. For more information, see [Custom routes](xref:razor-pages/index#custom-routes) and <xref:razor-pages/index>.
 * Specifies that a Razor component should handle requests directly. For more information, see <xref:blazor/fundamentals/routing>.
 
-::: moniker-end
-
-::: moniker range="< aspnetcore-3.0"
-
-The `@page` directive on the first line of a `.cshtml` file indicates that the file is a Razor Page. For more information, see <xref:razor-pages/index>.
-
-::: moniker-end
-
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-5.0"
 
 ### `@preservewhitespace`
 
@@ -692,7 +726,7 @@ When set to `false` (default), whitespace in the rendered markup from Razor comp
 * Leading or trailing within a `RenderFragment` parameter. For example, child content passed to another component.
 * It precedes or follows a C# code block, such as `@if` or `@foreach`.
 
-::: moniker-end
+:::moniker-end
 
 ### `@section`
 
@@ -706,13 +740,7 @@ The `@using` directive adds the C# `using` directive to the generated view:
 
 [!code-cshtml[](razor/sample/Views/Home/Contact9.cshtml)]
 
-::: moniker range=">= aspnetcore-3.0"
-
 In [Razor components](xref:blazor/components/index), `@using` also controls which components are in scope.
-
-::: moniker-end
-
-::: moniker range=">= aspnetcore-3.0"
 
 ## Directive attributes
 
@@ -742,10 +770,6 @@ Use the `@bind:culture` attribute with the [`@bind`](#bind) attribute to provide
 
 Razor provides event handling features for components. For more information, see <xref:blazor/components/event-handling>.
 
-::: moniker-end
-
-::: moniker range=">= aspnetcore-3.1"
-
 ### `@on{EVENT}:preventDefault`
 
 *This scenario only applies to Razor components (`.razor`).*
@@ -757,10 +781,6 @@ Prevents the default action for the event.
 *This scenario only applies to Razor components (`.razor`).*
 
 Stops event propagation for the event.
-
-::: moniker-end
-
-::: moniker range=">= aspnetcore-3.0"
 
 ### `@key`
 
@@ -774,9 +794,7 @@ The `@key` directive attribute causes the components diffing algorithm to guaran
 
 Component references (`@ref`) provide a way to reference a component instance so that you can issue commands to that instance. For more information, see <xref:blazor/components/index#capture-references-to-components>.
 
-::: moniker-end
-
-::: moniker range=">= aspnetcore-6.0"
+:::moniker range=">= aspnetcore-6.0"
 
 ### `@typeparam`
 
@@ -799,9 +817,9 @@ For more information, see the following articles:
 * <xref:blazor/components/index#generic-type-parameter-support>
 * <xref:blazor/components/templated-components>
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-6.0 >= aspnetcore-3.0"
+:::moniker range="< aspnetcore-6.0"
 
 ### `@typeparam`
 
@@ -818,7 +836,7 @@ For more information, see the following articles:
 * <xref:blazor/components/index#generic-type-parameter-support>
 * <xref:blazor/components/templated-components>
 
-::: moniker-end
+:::moniker-end
 
 ## Templated Razor delegates
 
@@ -935,7 +953,7 @@ There are three directives that pertain to [Tag Helpers](xref:mvc/views/tag-help
 
 ### Razor keywords
 
-* `page` (Requires ASP.NET Core 2.1 or later)
+* `page`
 * `namespace`
 * `functions`
 * `inherits`
@@ -970,11 +988,25 @@ C# Razor keywords must be double-escaped with `@(@C# Razor Keyword)` (for exampl
 
 ## Inspect the Razor C# class generated for a view
 
-::: moniker range=">= aspnetcore-2.1"
+::: moniker range=">= aspnetcore-5.0"
 
-With .NET Core SDK 2.1 or later, the [Razor SDK](xref:razor-pages/sdk) handles compilation of Razor files. When building a project, the Razor SDK generates an `obj/<build_configuration>/<target_framework_moniker>/Razor` directory in the project root. The directory structure within the `Razor` directory mirrors the project's directory structure.
+The [Razor SDK](xref:razor-pages/sdk) handles compilation of Razor files. By default, the generated code files aren't emitted. To enable emitting the code files, set the `EmitCompilerGeneratedFiles` directive in the project file (`.csproj`) to `true`:
 
-Consider the following directory structure in an ASP.NET Core 2.1 Razor Pages project targeting .NET Core 2.1:
+```xml
+<PropertyGroup>
+  <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+</PropertyGroup>
+```
+
+When building a 6.0 project (`net6.0`) in the `Debug` build configuration, the Razor SDK generates an `obj/Debug/net6.0/generated/` directory in the project root. Its subdirectory contains the emitted Razor page code files.
+
+::: moniker-end
+
+::: moniker range="< aspnetcore-5.0"
+
+The [Razor SDK](xref:razor-pages/sdk) handles compilation of Razor files. When building a project, the Razor SDK generates an `obj/{BUILD CONFIGURATION}/{TARGET FRAMEWORK MONIKER}/Razor` directory in the project root. The directory structure within the `Razor` directory mirrors the project's directory structure.
+
+Consider the following directory structure in an ASP.NET Core Razor Pages 2.1 project:
 
 ```
  Areas/
@@ -989,9 +1021,9 @@ Consider the following directory structure in an ASP.NET Core 2.1 Razor Pages pr
    _ViewStart.cshtml
    Index.cshtml
    Index.cshtml.cs
-  ```
+```
 
-Building the project in *Debug* configuration yields the following `obj` directory:
+Building the project in `Debug` configuration yields the following `obj` directory:
 
 ```
  obj/
@@ -1011,22 +1043,6 @@ Building the project in *Debug* configuration yields the following `obj` directo
 ```
 
 To view the generated class for `Pages/Index.cshtml`, open `obj/Debug/netcoreapp2.1/Razor/Pages/Index.g.cshtml.cs`.
-
-::: moniker-end
-
-::: moniker range="<= aspnetcore-2.0"
-
-Add the following class to the ASP.NET Core MVC project:
-
-[!code-csharp[](razor/sample/Utilities/CustomTemplateEngine.cs)]
-
-In `Startup.ConfigureServices`, override the `RazorTemplateEngine` added by MVC with the `CustomTemplateEngine` class:
-
-[!code-csharp[](razor/sample/Startup.cs?highlight=4&range=10-14)]
-
-Set a breakpoint on the `return csharpDocument;` statement of `CustomTemplateEngine`. When program execution stops at the breakpoint, view the value of `generatedCode`.
-
-![Text Visualizer view of generatedCode](razor/_static/tvr.png)
 
 ::: moniker-end
 
